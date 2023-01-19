@@ -13,7 +13,6 @@
     "@types/spotify-web-api-node": "^5.0.7",
     "@types/winston": "^2.4.4",
     "cron": "^2.2.0",
-    "spotify-web-api-node": "^5.0.2",
     "winston": "^3.8.2"
   }
 }

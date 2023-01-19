@@ -1,5 +1,5 @@
 import {getWeekOfYear} from "../../common/utils/date-util.js";
-import SpotifyWebApi from "spotify-web-api-node";
+import {SpotifyWebApi} from "../spotify-web-api.js";
 
 export default class PlaylistUtils {
     static copyToNew(spotifyApi: SpotifyWebApi) {
