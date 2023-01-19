@@ -1,4 +1,5 @@
 import {GetCurrentUserProfileResponse} from "./interfaces/get-current-user-profile-response.js";
+import {Response} from "./interfaces/response.js";
 
 export class SpotifyWebApi {
 
@@ -11,8 +12,8 @@ export class SpotifyWebApi {
         this.clientSecret = clientSecret
     }
 
-    getMe(): Promise<GetCurrentUserProfileResponse> {
-        return new Promise<GetCurrentUserProfileResponse>(() => {})
+    getMe(): Promise<Response<GetCurrentUserProfileResponse>> {
+        return new Promise<Response<GetCurrentUserProfileResponse>>(() => {})
     }
 
     createPlaylist(title: string) {

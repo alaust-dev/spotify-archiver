@@ -19,7 +19,7 @@ async function main() {
 
     const spotifyApi = new SpotifyWebApi(env.CLIENT_ID!, env.CLIENT_SECRET!)
     spotifyApi.getMe().then(value => {
-        log.info(`Logged in as user: ${value.display_name}`)
+        log.info(`Logged in as user: ${value.body.display_name}`)
     })
     const job = new CronJob('* * * * * *',
         () => {
