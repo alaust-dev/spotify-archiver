@@ -7,9 +7,10 @@ pipeline {
 
     stages {
         stage('Test') {
-            sh 'curl -fsSL https://bun.sh/install | bash'
-            sh 'source ~/.bashrc'
-            sh 'bun wiptest'
+            steps {
+                sh 'curl -fsSL https://bun.sh/install | bash'
+                sh 'export BUN_INSTALL="$HOME/.bun" && export PATH="$BUN_INSTALL/bin:$PATH" && bun wiptest'
+            }
         }
         stage('Build stage') {
             when {
