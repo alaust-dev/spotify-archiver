@@ -6,6 +6,11 @@ pipeline {
     }
 
     stages {
+        stage('Test') {
+            sh 'curl -fsSL https://bun.sh/install | bash'
+            sh 'source ~/.bashrc'
+            sh 'bun wiptest'
+        }
         stage('Build stage') {
             when {
                 branch 'develop'
