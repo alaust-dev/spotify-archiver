@@ -3,6 +3,7 @@ import PlaylistUtils from "./spotify/utils/playlist-utils.js";
 import {env} from "bun";
 import {SpotifyWebApi} from "./spotify/spotify-web-api.js";
 import DateUtil from "./common/utils/date-util.js";
+import {HttpHealthServer} from "./health/http-health-server.js";
 
 const winston = require('winston');
 
@@ -35,6 +36,7 @@ async function main() {
     log.info(`Logged in as: ${currentUser.display_name}`)
 
 
+    const healthServer = new HttpHealthServer()
     const job = new CronJob(env.CRON,
         async () => {
             log.info("Start archiving...")
@@ -60,6 +62,7 @@ async function main() {
             }
         })
 
+    healthServer.start()
     job.start()
 }
 
