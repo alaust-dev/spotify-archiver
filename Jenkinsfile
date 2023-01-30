@@ -38,7 +38,7 @@ pipeline {
                 sh 'docker build -t alaust/spotify-archiver:latest -t alaust/spotify-archiver:$VERSION_TAG .'
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                 sh 'docker push alaust/spotify-archiver:latest'
-                sh 'alaust/spotify-archiver:$VERSION_TAG'
+                sh 'docker push alaust/spotify-archiver:$VERSION_TAG'
             }
         }
     }
