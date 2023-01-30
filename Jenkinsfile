@@ -29,11 +29,16 @@ pipeline {
             steps {
                 script {
                     env.VERSION_TAG = sh(returnStdout: true, script: 'git tag --points-at HEAD')
-                    env.VERSION_TAG = env.VERSION_TAG == "" ? sh(returnStdout: true, script: 'git rev-parse HEAD').substring(0, 15) : env.VERSION_TAG
+                    if (env.VERSION_TAG == "") {
+                        env.VERSION_TAG = sh(returnStdout: true, script: 'git rev-parse HEAD').substring(0, 15)
+                    } else if (env.VERSION_TAG.startsWith("v")) {
+                        env.VERSION_TAG = env.VERSION_TAG.substring(1)
+                    }
                 }
                 sh 'docker build -t alaust/spotify-archiver:latest -t alaust/spotify-archiver:$VERSION_TAG .'
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push alaust/spotify-archiver:latest alaust/spotify-archiver:$VERSION_TAG'
+                sh 'docker push alaust/spotify-archiver:latest'
+                sh 'alaust/spotify-archiver:$VERSION_TAG'
             }
         }
     }
