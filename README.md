@@ -22,10 +22,22 @@ docker run -p 30100:30100 \
  -e CRON=<THE CRON SCHEDULE> \
  alaust/spotify-archiver:latest
 ```
-
-Available Tag's:
+### Available Tag's:
 - **latest** - Recommended: the latest stable version (main branch)
 - **stage** - the latest development build (develop branch)
+
+### Cron Format:
+```
+--------- Seconds: 0-59
+| --------- Minutes: 0-59
+| | --------- Hours: 0-23
+| | | --------- Day of Month: 1-31
+| | | | --------- Months: 0-11 (Jan-Dec)
+| | | | | --------- Day of Week: 0-6 (Sun-Sat)
+| | | | | |
+0 0 3 * * 2
+```
+This example shows a scheduled time at **03:00:00 on Tuesday**.
 
 ## Health Endpoint
 You can monitor if the last run is not older than 8 days.
