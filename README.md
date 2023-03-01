@@ -47,4 +47,4 @@ older than 8 days, otherwise it returns 500.
 
 ## Kubernetes Deployment
 I deploy this Software on Kubernetes, you can find the deployment files
-[here](https://github.com/alaust-dev/kubernetes-deployments).
+[here](https://github.com/alaust-dev/kubernetes-deployments/tree/main/production/spotify-archiver).
