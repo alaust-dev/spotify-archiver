@@ -1,44 +1,49 @@
-pipeline {
-    agent any
+podTemplate(label: 'build', containers: [
+    containerTemplate(name: 'bun', image: 'oven/bun', command: 'sh', ttyEnabled: true),
+    containerTemplate(name: 'docker', image: 'docker:dind', privileged: true, command: 'sh', ttyEnabled: true)
+],
+    volumes: [hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')]
+) {
+    node('build') {
+        stage('prepare') {
+            checkout scm
+        }
 
-    environment {
-        DOCKERHUB_CREDENTIALS=credentials('70e941c6-4e5b-4097-a401-5142eedb17c5')
-    }
-
-    stages {
-        stage('Test') {
-            steps {
-                sh 'curl -fsSL https://bun.sh/install | bash'
-                sh 'export BUN_INSTALL="$HOME/.bun" && export PATH="$BUN_INSTALL/bin:$PATH" && bun wiptest'
+        stage('test') {
+            container('bun') {
+                sh('bun wiptest')
             }
         }
-        stage('Build stage') {
-            when {
-                branch 'develop'
-            }
-            steps {
-                sh 'docker build -t alaust/spotify-archiver:stage .'
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push alaust/spotify-archiver:stage'
-            }
-        }
-        stage('Build productive') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    env.VERSION_TAG = sh(returnStdout: true, script: 'git tag --points-at HEAD')
-                    if (env.VERSION_TAG == "") {
-                        env.VERSION_TAG = sh(returnStdout: true, script: 'git rev-parse HEAD').substring(0, 15)
-                    } else if (env.VERSION_TAG.startsWith("v")) {
-                        env.VERSION_TAG = env.VERSION_TAG.substring(1)
-                    }
+
+        stage('build stage') {
+            if (env.BRANCH_NAME != 'develop') return
+            withCredentials([usernamePassword(credentialsId: '70e941c6-4e5b-4097-a401-5142eedb17c5', passwordVariable: 'dockerKey', usernameVariable: 'dockerUser')]) {
+                container('docker') {
+                    sh('echo $dockerKey | docker login -u $dockerUser --password-stdin')
+                    sh('docker build . -t alaust/spotify-archiver:stage')
+                    sh('docker push alaust/spotify-archiver:stage')
                 }
-                sh 'docker build -t alaust/spotify-archiver:latest -t alaust/spotify-archiver:$VERSION_TAG .'
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push alaust/spotify-archiver:latest'
-                sh 'docker push alaust/spotify-archiver:$VERSION_TAG'
+            }
+
+        }
+
+        stage('build prod') {
+            if (env.BRANCH_NAME != 'main') return
+
+            env.VERSION_TAG = sh(returnStdout: true, script: 'git tag --points-at HEAD')
+            if (env.VERSION_TAG == "") {
+                env.VERSION_TAG = sh(returnStdout: true, script: 'git rev-parse HEAD').substring(0, 15)
+            } else if (env.VERSION_TAG.startsWith("v")) {
+                env.VERSION_TAG = env.VERSION_TAG.substring(1)
+            }
+
+            withCredentials([usernamePassword(credentialsId: '70e941c6-4e5b-4097-a401-5142eedb17c5', passwordVariable: 'dockerKey', usernameVariable: 'dockerUser')]) {
+                container('docker') {
+                    sh('echo $dockerKey | docker login -u $dockerUser --password-stdin')
+                    sh('docker build -t alaust/spotify-archiver:latest -t alaust/spotify-archiver:$VERSION_TAG .')
+                    sh('docker push alaust/spotify-archiver:latest')
+                    sh('docker push alaust/spotify-archiver:$VERSION_TAG')
+                }
             }
         }
     }
