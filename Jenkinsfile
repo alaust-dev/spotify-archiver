@@ -10,24 +10,30 @@ podTemplate(label: 'build', containers: [
         }
 
         stage('test') {
-            container('bun') {
-                sh('bun wiptest')
+            steps {
+                container('bun') {
+                    sh('bun wiptest')
+                }
             }
         }
 
         stage('build stage') {
             if (env.BRANCH_NAME != 'develop') return
 
-            container('docker') {
-                buildImage(tag: "stage")
+            steps {
+                container('docker') {
+                    buildImage(tag: "stage")
+                }
             }
         }
 
         stage('build prod') {
             if (env.BRANCH_NAME != 'main') return
 
-            container('docker') {
-                buildImage(tag: "prod")
+            steps {
+                container('docker') {
+                    buildImage(tag: "prod")
+                }
             }
         }
     }
