@@ -7,7 +7,7 @@ export interface HealthStatus {
 
 export class HttpHealthServer {
 
-    static healthStatus: HealthStatus = {
+    public static healthStatus: HealthStatus = {
         lastRun: new Date().toString()
     }
 
