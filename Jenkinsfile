@@ -38,6 +38,11 @@ podTemplate(label: 'build', containers: [
             container('docker') {
                 buildImage(tag: "alaust/spotify-archiver", version: ["latest", version])
             }
+            deployK8s(deployments: [
+                "production/spotify-archiver/deployment.yml",
+                "production/spotify-archiver/secret.yml",
+                "production/spotify-archiver/service.yml",
+            ])
         }
     }
 }
