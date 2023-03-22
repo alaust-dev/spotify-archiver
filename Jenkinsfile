@@ -32,7 +32,7 @@ podTemplate(label: 'build', containers: [
             if (version == "") {
                 version = sh(returnStdout: true, script: 'git rev-parse HEAD').substring(0, 15)
             } else if (version.startsWith("v")) {
-                version = env.VERSION_TAG.substring(1)
+                version = version.substring(1)
             }
 
             container('docker') {
