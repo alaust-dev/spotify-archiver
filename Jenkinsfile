@@ -1,3 +1,5 @@
+@Library('shared-libaries') _
+
 podTemplate(label: 'build', containers: [
     containerTemplate(name: 'bun', image: 'oven/bun', command: 'sh', ttyEnabled: true),
     containerTemplate(name: 'docker', image: 'docker:dind', privileged: true, command: 'sh', ttyEnabled: true)
@@ -10,30 +12,24 @@ podTemplate(label: 'build', containers: [
         }
 
         stage('test') {
-            steps {
-                container('bun') {
-                    sh('bun wiptest')
-                }
+            container('bun') {
+                sh('bun wiptest')
             }
         }
 
         stage('build stage') {
             if (env.BRANCH_NAME != 'develop') return
 
-            steps {
-                container('docker') {
-                    buildImage(tag: "stage")
-                }
+            container('docker') {
+                buildImage(tag: "stage")
             }
         }
 
         stage('build prod') {
             if (env.BRANCH_NAME != 'main') return
 
-            steps {
-                container('docker') {
-                    buildImage(tag: "prod")
-                }
+            container('docker') {
+                buildImage(tag: "prod")
             }
         }
     }
