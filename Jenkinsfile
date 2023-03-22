@@ -21,7 +21,7 @@ podTemplate(label: 'build', containers: [
             if (env.BRANCH_NAME != 'develop') return
 
             container('docker') {
-                buildImage(tag: "alaust/spotify-archiver", version: "stage")
+                buildImage(tag: "alaust/spotify-archiver", version: ["stage"])
             }
         }
 
@@ -36,8 +36,7 @@ podTemplate(label: 'build', containers: [
             }
 
             container('docker') {
-                buildImage(tag: "alaust/spotify-archiver", version: "latest")
-                buildImage(tag: "alaust/spotify-archiver", version: version)
+                buildImage(tag: "alaust/spotify-archiver", version: ["latest", version])
             }
         }
     }
