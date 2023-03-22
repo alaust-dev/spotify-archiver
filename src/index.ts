@@ -56,6 +56,7 @@ async function main() {
             )
 
             if(successful) {
+                HttpHealthServer.healthStatus.lastRun = new Date().toString()
                 log.info("Successfully archived discover weekly.")
             } else {
                 log.error("Failed to archive discover weekly.")
