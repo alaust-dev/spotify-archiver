@@ -21,15 +21,23 @@ podTemplate(label: 'build', containers: [
             if (env.BRANCH_NAME != 'develop') return
 
             container('docker') {
-                buildImage(tag: "stage")
+                buildImage(tag: "alaust/spotify-archiver", version: "stage")
             }
         }
 
         stage('build prod') {
             if (env.BRANCH_NAME != 'main') return
 
+            String version = sh(returnStdout: true, script: 'git tag --points-at HEAD')
+            if (version == "") {
+                version = sh(returnStdout: true, script: 'git rev-parse HEAD').substring(0, 15)
+            } else if (version.startsWith("v")) {
+                version = env.VERSION_TAG.substring(1)
+            }
+
             container('docker') {
-                buildImage(tag: "prod")
+                buildImage(tag: "alaust/spotify-archiver", version: "latest")
+                buildImage(tag: "alaust/spotify-archiver", version: version)
             }
         }
     }
